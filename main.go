@@ -1,8 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
 
+	log "github.com/sirupsen/logrus"
+
+	"github.com/gorilla/mux"
 	"main.go/contracts"
 )
 
@@ -29,7 +35,7 @@ func seed() {
 	}
 
 	for _, item := range items {
-		AddItem(item)
+		TodoList = append(TodoList, item)
 	}
 
 }
@@ -37,46 +43,77 @@ func seed() {
 func main() {
 
 	seed()
-	DeleteItem(2)
+	r := mux.NewRouter()
+
+	r.HandleFunc("/listItems", GetItems).Methods("GET")
+	r.HandleFunc("/addItem", AddItem).Methods("POST")
+	r.HandleFunc("/deleteItem/{id:[0-9]+}", DeleteItem).Methods("POST")
+	// DeleteItem(2)
 	fmt.Println(TodoList)
+
+	log.Fatal(http.ListenAndServe(":8080", r))
+}
+
+func GetItems(w http.ResponseWriter, r *http.Request) {
+
+	json.NewEncoder(w).Encode(TodoList)
+	return
 
 }
 
-func AddItem(newItem contracts.Item) {
+func AddItem(w http.ResponseWriter, r *http.Request) {
+
+	var newItem contracts.Item
+
+	err := json.NewDecoder(r.Body).Decode(&newItem)
+	if err != nil {
+		log.Error("Error Parsing Request", err)
+		fmt.Fprintf(w, "Error Parsing Request")
+	}
 
 	if newItem.ID <= 0 {
-		fmt.Println("Item ID Missing")
+		log.Error("Item ID Missing")
+		fmt.Fprintf(w, "Item ID Missing")
 		return
 	}
 
 	for _, item := range TodoList {
 		if item.ID == newItem.ID {
-			fmt.Println("Item with ID already exists !!")
+			log.Warn("Item with ID already exists !!")
+			fmt.Fprintf(w, "Item with ID Already exists")
 			return
 		}
 	}
 
 	TodoList = append(TodoList, newItem)
-	fmt.Println("Item Successfully Added")
+	log.Info("Item Successfully Added")
+	fmt.Fprintf(w, "Successfully Added Item")
 	return
 }
 
-func DeleteItem(itemID int64) {
+func DeleteItem(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	itemIDString := vars["id"]
+	itemID, _ := strconv.ParseInt(itemIDString, 10, 64)
 
 	if itemID <= 0 {
-		fmt.Println("Invalid Item ID !")
+		log.Warn("Invalid Item ID !")
 		return
 	}
 
 	for index, item := range TodoList {
 		if item.ID == itemID {
 			TodoList = append(TodoList[:index], TodoList[index+1:]...)
-			fmt.Println("Item Successfully Deleted")
+			log.Println("Item Successfully Deleted")
+			fmt.Fprintf(w, "Successfully Added Item")
 			return
 		}
 	}
 
-	fmt.Println("Item Not Found")
+	log.Info("Item Not Found")
+	fmt.Fprintf(w, "Item Not Found")
 	return
 
 }
