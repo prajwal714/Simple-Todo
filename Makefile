@@ -1,4 +1,4 @@
-APP=""
+APP="Simple-Todo"
 APP_EXECUTABLE="./out/$(APP)"
 
 fmt: go fmt ./...

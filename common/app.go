@@ -1,6 +1,8 @@
 package common
 
-import "Go-Chat/go.mod/config"
+import (
+	"main.go/config"
+)
 
 func Initialize() {
 	config.Load()
