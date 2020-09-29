@@ -1,5 +1,0 @@
-package delivery
-
-func create() {
-
-}

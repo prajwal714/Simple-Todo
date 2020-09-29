@@ -6,4 +6,5 @@ import (
 
 func Initialize() {
 	config.Load()
+
 }

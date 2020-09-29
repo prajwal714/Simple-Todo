@@ -27,11 +27,11 @@ func Load() {
 	viper.ReadInConfig()
 
 	appConfig = &Config{
-		port:               getIntOrPanic("APP_PORT"),
-		secretKey:          fatalGetString("SECRET_KEY"),
-		githubClientID:     fatalGetString("GITHUB_CLIENT_ID"),
-		githubClientSecret: fatalGetString("GITHUB_CLIENT_SECRET"),
-		callbackURL:        fatalGetString("CALLBACK_URL"),
+		port: getIntOrPanic("APP_PORT"),
+		// secretKey:          fatalGetString("SECRET_KEY"),
+		// githubClientID:     fatalGetString("GITHUB_CLIENT_ID"),
+		// githubClientSecret: fatalGetString("GITHUB_CLIENT_SECRET"),
+		// callbackURL:        fatalGetString("CALLBACK_URL"),
 	}
 
 }
