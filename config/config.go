@@ -1,6 +1,9 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	port               int
@@ -18,13 +21,14 @@ func Load() {
 	viper.SetConfigName("application")
 	viper.AddConfigPath("./")
 	viper.AddConfigPath("../")
-	viper.AddConfigPath("../../")
-	viper.AddConfigPath("../../../")
-	viper.AddConfigPath("../../../../")
 
 	viper.SetConfigType("yaml")
 
-	viper.ReadInConfig()
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Error(err)
+		return
+	}
 
 	appConfig = &Config{
 		port: getIntOrPanic("APP_PORT"),
