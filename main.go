@@ -57,7 +57,7 @@ func main() {
 	r.HandleFunc("/listItems", delivery.ListItems).Methods("GET")
 	r.HandleFunc("/addItem", delivery.AddItem).Methods("POST")
 	r.HandleFunc("/deleteItem/{id:[0-9]+}", delivery.DeleteItem).Methods("POST")
-
+	r.HandleFunc("/signupUser", delivery.SignupUser).Methods("POST")
 	fmt.Println(TodoList)
 
 	log.Fatal(http.ListenAndServe(":8080", r))
